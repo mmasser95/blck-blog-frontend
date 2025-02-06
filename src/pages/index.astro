@@ -1,20 +1,45 @@
 ---
-import Welcome from "../components/Welcome.astro";
+import { marked } from "marked";
+
 import Layout from "../layouts/Layout.astro";
 
 import fetchApi from "../lib/strapi";
-import type Article from "../interfaces/article";
+import type Index from "../interfaces/index";
 
-const articles = await fetchApi<Article[]>({
-	endpoint: "articles",
+const indexPage = await fetchApi<Index>({
+	endpoint: "index?populate=image",
 	wrappedByKey: "data",
 });
+
+const imageURL = import.meta.env.STRAPI_URL + indexPage.image.url;
+
+const htmlContent = await marked(indexPage.content);
 ---
 
 <Layout>
-	<ul>
-		{articles.map((article) => <li>
-			<h2>{article.title}</h2>
-		</li>)}
-	</ul>
+	<!-- Jumbotron -->
+	<div
+		class="relative h-[400px] overflow-hidden rounded-lg bg-cover bg-no-repeat p-12 text-center text-white"
+		style={`background-image: url('${imageURL}');`}
+	>
+		<div
+			class="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-black/60 bg-fixed"
+		>
+			<div class="flex h-full items-center justify-center">
+				<div class="text-white">
+					<h2 class="mb-4 text-4xl font-semibold">Benvinguts</h2>
+					<h4 class="mb-6 text-xl font-semibold">Martí Masot</h4>
+					<button
+						type="button"
+						class="inline-block rounded border-2 border-neutral-50 px-6 pb-[6px] pt-2 text-xs font-medium uppercase leading-normal text-neutral-50 transition duration-150 ease-in-out hover:border-neutral-300 hover:text-neutral-200 focus:border-neutral-300 focus:text-neutral-200 focus:outline-none focus:ring-0 active:border-neutral-300 active:text-neutral-200 dark:hover:bg-neutral-600 dark:focus:bg-neutral-600"
+					>
+						Subscribe
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Jumbotron -->
+
+	<article data-remove-styles set:html={htmlContent} />
 </Layout>
