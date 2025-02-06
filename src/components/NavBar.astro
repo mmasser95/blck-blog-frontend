@@ -1,0 +1,20 @@
+---
+const links = [
+  { name: "Inicio", href: "/" },
+  { name: "Blog", href: "/blog" },
+  { name: "Contacto", href: "/contacto" }
+];
+---
+
+<nav class="bg-blue-600 text-white p-4 shadow-md">
+  <div class="container mx-auto flex justify-between items-center">
+    <a href="/" class="text-xl font-bold">BLCK Blog</a>
+    <ul class="flex space-x-4">
+      {links.map(link => (
+        <li>
+          <a href={link.href} class="hover:text-gray-300">{link.name}</a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</nav>
